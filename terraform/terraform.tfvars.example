@@ -1,0 +1,8 @@
+aws_region       = "us-east-1"
+project_name     = "sre-slo-demo"
+environment      = "dev"
+container_image  = "123456789012.dkr.ecr.us-east-1.amazonaws.com/sre-slo-demo@sha256:replace-me"
+monthly_budget_usd = 75
+# certificate_arn = "arn:aws:acm:us-east-1:123456789012:certificate/replace-me"
+# budget_email    = "owner@example.com"
+

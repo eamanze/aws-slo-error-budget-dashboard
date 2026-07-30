@@ -1,0 +1,43 @@
+groups:
+  - name: sre-demo-sli
+    interval: 30s
+    rules:
+      - record: service:availability:ratio_rate5m
+        expr: avg_over_time(probe_success{job="blackbox-http"}[5m])
+      - record: service:availability:ratio_rate30m
+        expr: avg_over_time(probe_success{job="blackbox-http"}[30m])
+      - record: service:availability:ratio_rate1h
+        expr: avg_over_time(probe_success{job="blackbox-http"}[1h])
+      - record: service:availability:ratio_rate6h
+        expr: avg_over_time(probe_success{job="blackbox-http"}[6h])
+      - record: service:availability:ratio_rate28d
+        expr: avg_over_time(probe_success{job="blackbox-http"}[28d])
+
+      - record: service:availability:error_budget_remaining_ratio
+        expr: clamp_max(1 - ((1 - service:availability:ratio_rate28d) / (1 - 0.995)), 1)
+
+      - record: service:availability:burn_rate5m
+        expr: (1 - service:availability:ratio_rate5m) / (1 - 0.995)
+      - record: service:availability:burn_rate30m
+        expr: (1 - service:availability:ratio_rate30m) / (1 - 0.995)
+      - record: service:availability:burn_rate1h
+        expr: (1 - service:availability:ratio_rate1h) / (1 - 0.995)
+      - record: service:availability:burn_rate6h
+        expr: (1 - service:availability:ratio_rate6h) / (1 - 0.995)
+
+      - record: service:http_success:ratio_rate5m
+        expr: |
+          sum(rate(http_requests_total{route="/",status_code=~"2.."}[5m]))
+          /
+          clamp_min(sum(rate(http_requests_total{route="/"}[5m])), 0.000001)
+
+      - record: service:http_latency_under_500ms:ratio_rate5m
+        expr: |
+          sum(rate(http_request_duration_seconds_bucket{route="/",le="0.5"}[5m]))
+          /
+          clamp_min(sum(rate(http_request_duration_seconds_count{route="/"}[5m])), 0.000001)
+
+      - record: service:http_latency:p95_rate5m
+        expr: |
+          histogram_quantile(0.95,
+            sum by (le) (rate(http_request_duration_seconds_bucket{route="/"}[5m])))

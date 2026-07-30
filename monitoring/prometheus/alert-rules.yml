@@ -1,0 +1,43 @@
+groups:
+  - name: slo-burn-rate
+    rules:
+      - alert: AvailabilitySLOBurnRateCritical
+        expr: |
+          service:availability:burn_rate5m > 14.4
+          and
+          service:availability:burn_rate1h > 14.4
+        for: 2m
+        labels:
+          severity: critical
+          service: sre-demo-api
+          runbook: high-error-budget-burn
+        annotations:
+          summary: Availability error budget is burning rapidly
+          description: Both the 5m and 1h burn rates exceed 14.4x.
+          runbook_url: https://github.com/eamanze/aws-slo-error-budget-dashboard/blob/main/runbooks/high-error-budget-burn.md
+
+      - alert: AvailabilitySLOBurnRateWarning
+        expr: |
+          service:availability:burn_rate30m > 3
+          and
+          service:availability:burn_rate6h > 3
+        for: 15m
+        labels:
+          severity: warning
+          service: sre-demo-api
+          runbook: high-error-budget-burn
+        annotations:
+          summary: Availability error budget has sustained elevated burn
+          description: Both the 30m and 6h burn rates exceed 3x.
+          runbook_url: https://github.com/eamanze/aws-slo-error-budget-dashboard/blob/main/runbooks/high-error-budget-burn.md
+
+      - alert: ApplicationMetricsMissing
+        expr: up{job="application-metrics"} == 0
+        for: 2m
+        labels:
+          severity: warning
+          service: sre-demo-api
+          runbook: target-down
+        annotations:
+          summary: Prometheus cannot scrape application metrics
+          runbook_url: https://github.com/eamanze/aws-slo-error-budget-dashboard/blob/main/runbooks/target-down.md

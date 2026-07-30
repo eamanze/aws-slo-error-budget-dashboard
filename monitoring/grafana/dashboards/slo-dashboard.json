@@ -1,0 +1,86 @@
+{
+  "annotations": {"list": []},
+  "editable": false,
+  "graphTooltip": 1,
+  "panels": [
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {"max": 1, "min": 0, "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": null}, {"color": "green", "value": 0.995}]}, "unit": "percentunit"}, "overrides": []},
+      "gridPos": {"h": 6, "w": 6, "x": 0, "y": 0},
+      "id": 1,
+      "options": {"colorMode": "value", "graphMode": "area", "justifyMode": "auto", "reduceOptions": {"calcs": ["lastNotNull"], "values": false}, "textMode": "auto"},
+      "targets": [{"expr": "service:availability:ratio_rate28d", "legendFormat": "Availability", "refId": "A"}],
+      "title": "Availability — rolling 28d",
+      "type": "stat"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {"max": 1, "min": 0, "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": null}, {"color": "orange", "value": 0.25}, {"color": "green", "value": 0.5}]}, "unit": "percentunit"}, "overrides": []},
+      "gridPos": {"h": 6, "w": 6, "x": 6, "y": 0},
+      "id": 2,
+      "options": {"colorMode": "value", "graphMode": "area", "justifyMode": "auto", "reduceOptions": {"calcs": ["lastNotNull"], "values": false}, "textMode": "auto"},
+      "targets": [{"expr": "service:availability:error_budget_remaining_ratio", "legendFormat": "Budget remaining", "refId": "A"}],
+      "title": "Error budget remaining",
+      "type": "stat"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {"max": 1, "min": 0, "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": null}, {"color": "green", "value": 0.99}]}, "unit": "percentunit"}, "overrides": []},
+      "gridPos": {"h": 6, "w": 6, "x": 12, "y": 0},
+      "id": 3,
+      "options": {"colorMode": "value", "graphMode": "area", "justifyMode": "auto", "reduceOptions": {"calcs": ["lastNotNull"], "values": false}, "textMode": "auto"},
+      "targets": [{"expr": "service:http_latency_under_500ms:ratio_rate5m", "legendFormat": "Requests <500ms", "refId": "A"}],
+      "title": "Latency SLI — requests under 500ms",
+      "type": "stat"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {"unit": "s"}, "overrides": []},
+      "gridPos": {"h": 6, "w": 6, "x": 18, "y": 0},
+      "id": 4,
+      "options": {"colorMode": "value", "graphMode": "area", "justifyMode": "auto", "reduceOptions": {"calcs": ["lastNotNull"], "values": false}, "textMode": "auto"},
+      "targets": [{"expr": "service:http_latency:p95_rate5m", "legendFormat": "p95", "refId": "A"}],
+      "title": "Diagnostic p95 latency",
+      "type": "stat"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {"min": 0, "unit": "short"}, "overrides": []},
+      "gridPos": {"h": 9, "w": 12, "x": 0, "y": 6},
+      "id": 5,
+      "options": {"legend": {"displayMode": "table", "placement": "bottom", "showLegend": true}, "tooltip": {"mode": "multi", "sort": "desc"}},
+      "targets": [
+        {"expr": "service:availability:burn_rate5m", "legendFormat": "5m burn", "refId": "A"},
+        {"expr": "service:availability:burn_rate30m", "legendFormat": "30m burn", "refId": "B"},
+        {"expr": "service:availability:burn_rate1h", "legendFormat": "1h burn", "refId": "C"},
+        {"expr": "service:availability:burn_rate6h", "legendFormat": "6h burn", "refId": "D"}
+      ],
+      "title": "Multi-window availability burn rates",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {"max": 1, "min": 0, "unit": "percentunit"}, "overrides": []},
+      "gridPos": {"h": 9, "w": 12, "x": 12, "y": 6},
+      "id": 6,
+      "options": {"legend": {"displayMode": "table", "placement": "bottom", "showLegend": true}, "tooltip": {"mode": "multi", "sort": "desc"}},
+      "targets": [
+        {"expr": "service:availability:ratio_rate5m", "legendFormat": "Probe availability", "refId": "A"},
+        {"expr": "service:http_success:ratio_rate5m", "legendFormat": "Request success", "refId": "B"},
+        {"expr": "vector(0.995)", "legendFormat": "Availability objective", "refId": "C"}
+      ],
+      "title": "User-visible reliability",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "15s",
+  "schemaVersion": 41,
+  "tags": ["sre", "slo", "error-budget"],
+  "templating": {"list": []},
+  "time": {"from": "now-6h", "to": "now"},
+  "timezone": "browser",
+  "title": "SRE Demo — SLO & Error Budget",
+  "uid": "sre-slo-dashboard",
+  "version": 1
+}
+
